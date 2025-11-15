@@ -31,9 +31,7 @@ public class StatementPrinter {
         for (Performance p : invoice.getPerformances()) {
 
             // add volume credits
-            volumeCredits += Math.max(p.audience - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
-            // add extra credit for every five comedy attendees
-            if ("comedy".equals(getPlay(p).type)) volumeCredits += p.audience / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
+            volumeCredits += getVolumeCredits(p);
 
             // print line for this order
             result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).name, frmt.format(getAmount(p) / 100), p.audience));
@@ -42,6 +40,14 @@ public class StatementPrinter {
         result.append(String.format("Amount owed is %s%n", frmt.format(totalAmount / 100)));
         result.append(String.format("You earned %s credits%n", volumeCredits));
         return result.toString();
+    }
+
+    private int getVolumeCredits(Performance performance) {
+        int result = 0;
+        result += Math.max(performance.audience - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
+        // add extra credit for every five comedy attendees
+        if ("comedy".equals(getPlay(performance).type)) result += performance.audience / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
+        return result;
     }
 
     private Play getPlay(Performance p) {
