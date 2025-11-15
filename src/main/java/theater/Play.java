@@ -1,7 +1,7 @@
 package theater;
 
 /**
- *
+ * Represents a play with a name and a type.
  * @null false
  */
 public class Play {
@@ -13,6 +13,7 @@ public class Play {
         this.name = name;
         this.type = type;
     }
+
     public String getName() {
         return name;
     }

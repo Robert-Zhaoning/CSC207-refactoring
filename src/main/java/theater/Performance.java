@@ -12,6 +12,7 @@ public class Performance {
         this.playID = playID;
         this.audience = audience;
     }
+
     public String getPlayID() {
         return playID;
     }

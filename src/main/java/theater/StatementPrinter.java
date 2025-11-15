@@ -8,8 +8,15 @@ import java.util.Map;
  * This class generates a statement for a given invoice of performances.
  */
 public class StatementPrinter {
-    public Invoice invoice;
-    public Map<String, Play> plays;
+    private final Invoice invoice;
+    private final Map<String, Play> plays;
+
+    /**
+     * Creates a StatementPrinter for the given invoice and plays.
+     *
+     * @param invoice the invoice to print, must not be null
+     * @param plays   the map of play id to play, must not be null
+     */
 
     public StatementPrinter(Invoice invoice, Map<String, Play> plays) {
         this.invoice = invoice;
@@ -21,6 +28,7 @@ public class StatementPrinter {
      * @return the formatted statement
      * @throws RuntimeException if one of the play types is not known
      */
+
     public String statement() {
 
         StringBuilder result = new StringBuilder(
@@ -34,9 +42,14 @@ public class StatementPrinter {
         }
 
         result.append(String.format("Amount owed is %s%n", usd(getTotalAmount())));
-        result.append(String.format("You earned %s credits%n", getVolumeCredits()));
+        result.append(String.format("You earned %s credits%n", getTotalVolumeCredits()));
         return result.toString();
     }
+    /**
+     * Returns the total amount for all performances in the invoice.
+     *
+     * @return the total amount in cents
+     */
 
     private int getTotalAmount() {
         int totalAmount = 0;
@@ -46,8 +59,13 @@ public class StatementPrinter {
         }
         return totalAmount;
     }
+    /**
+     * Returns the total volume credits over all performances.
+     *
+     * @return the total volume credits
+     */
 
-    private int getVolumeCredits() {
+    private int getTotalVolumeCredits() {
         int volumeCredits = 0;
 
         for (Performance p : invoice.getPerformances()) {
@@ -56,10 +74,23 @@ public class StatementPrinter {
         return volumeCredits;
     }
 
+    /**
+     * Formats the given amount as US dollars.
+     *
+     * @param amount the amount in cents
+     * @return the formatted dollar string
+     */
 
     private static String usd(int totalAmount) {
         return NumberFormat.getCurrencyInstance(Locale.US).format(totalAmount / 100);
     }
+
+    /**
+     * Returns the volume credits for a single performance.
+     *
+     * @param performance the performance
+     * @return the volume credits earned for this performance
+     */
 
     private int getVolumeCredits(Performance performance) {
         int result = 0;
@@ -68,10 +99,23 @@ public class StatementPrinter {
         if ("comedy".equals(getPlay(performance).getType())) result += performance.getAudience() / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
         return result;
     }
+    /**
+     * Returns the play associated with the given performance.
+     *
+     * @param performance the performance
+     * @return the play for that performance
+     */
 
     private Play getPlay(Performance p) {
         return plays.get(p.getPlayID());
     }
+
+    /**
+     * Returns the base amount for a single performance.
+     *
+     * @param performance the performance
+     * @return the base amount in cents
+     */
 
     private int getAmount(Performance performance) {
         int result = 0;
